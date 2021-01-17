@@ -6,37 +6,34 @@
     header('Location: login.php');
   }
 
-  if($_POST){
+  if(!empty($_POST)){
     $id = $_POST['id'];
-    $title = $_POST['title'];
-    $content = $_POST['content'];
-    
-    if($_FILES['image']['name'] != null){
-        $file = 'images/'.($_FILES['image']['name']);
-        $fileType = pathinfo($file,PATHINFO_EXTENSION);
-        if($fileType != 'png' && $fileType != 'jpg' && $fileType != 'jpeg'){
-            echo "<script>alert('Image must be PNG,JPG or JPEG');</script>";
-        }else{
-            $image = $_FILES['image']['name'];
-            $author_id = $_SESSION['user_id'];
-            move_uploaded_file($_FILES['image']['tmp_name'],$file);
-            $stmt = $pdo->prepare("UPDATE posts SET title='$title',content='$content',image='$image' WHERE id='$id'");
-            $result = $stmt->execute();
-            if ($result) {
-              echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
-            }
-        }
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    if (empty($_POST['role'])) {
+        $role = 0;
+      }else{
+        $role = 1;
+      }
+
+      $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email AND id!=:id");
+      $stmt->execute(array(':email'=>$email,':id'=>$id));
+      $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if($user){
+        echo "<script>alert('Email duplicated')</script>";
     }else{
-        $stmt = $pdo->prepare("UPDATE posts SET title='$title',content='$content' WHERE id='$id'");
+        $stmt = $pdo->prepare("UPDATE users SET name='$name',email='$email',role='$role' WHERE id='$id'");
         $result = $stmt->execute();
-        if ($result) {
-          echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
-        }
+
+          if($result){
+            echo "<script>alert('Successfully Updated');window.location.href='user_list.php';</script>";
+          }
     }
+      
   }
 
-
-  $sql = "SELECT * FROM posts WHERE id = ".$_GET['id'];
+  $sql = "SELECT * FROM users WHERE id = ".$_GET['id'];
   $stmt = $pdo->prepare($sql);
   $stmt->execute();
   $result = $stmt->fetchAll();
@@ -62,23 +59,22 @@
             <div class="card">
                 <div class="card-body">
                     <form action="" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="id" value="<?php echo $result[0]['id'];?>">
+                        <input type="hidden" name="id" value="<?php echo $_GET['id'];?>">
                         <div class="form-group">
-                            <label for="title">Title</label>
-                            <input type="text" class="form-control" name="title" value="<?php echo $result[0]['title'];?>"required>
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" name="name" value="<?php echo $result[0]['name']?>" required>
                         </div>
                         <div class="form-group">
-                            <label for="content">Content</label>
-                            <textarea name="content" class="form-control" cols="30" rows="10"><?php echo $result[0]['content'];?></textarea>
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="email" value="<?php echo $result[0]['email']?>" required>
                         </div>
                         <div class="form-group">
-                            <label for="image">Image</label> <br>
-                            <img src="images/<?php echo $result[0]['image'];?>" alt="Blog Image" width="100" height="100"> <br> <br>
-                            <input type="file" class="form-control" name="image" value="">
+                            <label for="admin">Role</label> <br>
+                            <input type="checkbox" name="role" value="1" <?php if($result[0]['role'] == 1) { echo 'checked';} else { echo ''; }?>>
                         </div>
                         <div class="form-group">
                             <input type="submit" class="btn btn-success" value="SUBMIT">
-                            <a href="index.php" class="btn btn-warning">Back</a>
+                            <a href="user_list.php" class="btn btn-warning">Back</a>
                         </div>
                     </form>
                 </div>

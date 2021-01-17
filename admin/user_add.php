@@ -1,0 +1,116 @@
+<?php
+  session_start();
+  require '../config/config.php';
+
+  if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
+    header('Location: login.php');
+  }
+
+  if($_POST){
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    if(empty($_POST['role'])){
+        $role = 0;
+    }else{
+        $role = 1;
+    }
+    $password = $_POST['password'];
+
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+    $stmt->bindValue(':email',$email);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if($user){
+        echo "<script>alert('Email Duplicated');</script>";
+    }else{
+          $stmt = $pdo->prepare("INSERT INTO users(name,email,role,password) VALUES (:name,:email,:role,:password)");
+          $result = $stmt->execute(
+              array(':name' => $name, ':email' => $email,':role'=> $role,':password' => $password)
+          );
+          if($result){
+            echo "<script>alert('Successfully added');window.location.href='user_list.php';</script>";
+          }
+    }
+      
+  }
+
+?>
+
+  <?php
+    include('header.php');
+  ?>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form action="user_add.php" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" name="name" placeholder="Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="email">Email</label>
+                          <input type="password" name="password" class="form-control" placeholder="Password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin">Role</label> <br>
+                            <input type="checkbox" name="role" value="1">
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-success" value="SUBMIT">
+                            <a href="user_list.php" class="btn btn-warning">Back</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+    <div class="p-3">
+      <h5>Title</h5>
+      <p>Sidebar content</p>
+    </div>
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <?php
+    include('footer.html');
+  ?>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+
+<!-- jQuery -->
+<script src="../plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../dist/js/adminlte.min.js"></script>
+</body>
+</html>

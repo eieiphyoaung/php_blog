@@ -26,7 +26,7 @@
             <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Blog Listings</h3>
+                <h3 class="card-title">User Listings</h3>
               </div>
               <?php
                 if(!empty($_GET['pageno'])){
@@ -38,25 +38,25 @@
                 $offset = ($pageno - 1) * $numOfrecs;
 
                 if(empty($_POST['search'])){
-                  $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+                  $stmt = $pdo->prepare("SELECT * FROM users ORDER BY id DESC");
                   $stmt->execute();
                   $rawResults = $stmt->fetchAll();
     
                   $total_pages = ceil(count($rawResults) / $numOfrecs);
     
-                  $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numOfrecs");
+                  $stmt = $pdo->prepare("SELECT * FROM users ORDER BY id DESC LIMIT $offset,$numOfrecs");
                   $stmt->execute();
                   $results = $stmt->fetchAll();
                 }else{
                   $search_key = $_POST['search'];
 
-                  $stmt = $pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$search_key%' ORDER BY id DESC");
+                  $stmt = $pdo->prepare("SELECT * FROM users WHERE name LIKE '%$search_key%' ORDER BY id DESC");
                   $stmt->execute();
                   $rawResults = $stmt->fetchAll();
     
                   $total_pages = ceil(count($rawResults) / $numOfrecs);
     
-                  $stmt = $pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$search_key%' ORDER BY id DESC LIMIT $offset,$numOfrecs");
+                  $stmt = $pdo->prepare("SELECT * FROM users WHERE name LIKE '%$search_key%' ORDER BY id DESC LIMIT $offset,$numOfrecs");
                   $stmt->execute();
                   $results = $stmt->fetchAll();
                 }
@@ -66,15 +66,16 @@
               <!-- /.card-header -->
               <div class="card-body">
                 <div>
-                  <a href="add.php" type="button" class="btn btn-success">Create Blog Post</a>
+                  <a href="user_add.php" type="button" class="btn btn-success">Create New User</a>
                 </div>
                 <br>
                 <table class="table table-bordered">
                   <thead>                  
                     <tr>
                       <th style="width: 10px">#</th>
-                      <th>Title</th>
-                      <th>Content</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Role</th>
                       <th style="width: 40px">Actions</th>
                     </tr>
                   </thead>
@@ -86,15 +87,16 @@
                     ?>
                     <tr>
                       <td><?php echo $count++; ?></td>
-                      <td><?php echo $result['title']; ?></td>
-                      <td><?php echo substr($result['content'],0,200); ?></td>
+                      <td><?php echo $result['name']; ?></td>
+                      <td><?php echo $result['email']; ?></td>
+                      <td><?php if($result['role'] ==1) {echo 'admin';} else { echo 'user';}?></td>
                       <td>
                           <div class="btn-group">
                               <div class="container">
-                                  <a href="edit.php?id= <?php echo $result['id']; ?>" type="button" class="btn btn-warning">Edit</a>
+                                  <a href="user_edit.php?id=<?php echo $result['id']; ?>" type="button" class="btn btn-warning">Edit</a>
                               </div>
                               <div class="container">
-                                  <a href="delete.php?id= <?php echo $result['id']; ?>"
+                                  <a href="user_delete.php?id=<?php echo $result['id']; ?>"
                                   onclick="return confirm('Are you sure to delete?');" type="button" class="btn btn-danger">
                                   Delete
                                 </a>

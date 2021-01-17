@@ -13,7 +13,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | Widgets</title>
+  <title>Blog Site</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -82,8 +82,10 @@
               }
           ?>
           <!-- /.col -->
-          <div>
-            <nav aria-label="Page navigation example" style="float:right;">
+        </div>
+        <!-- /.row -->
+        <div class="row" style="float:right;margin-right:0px !important;">
+            <nav aria-label="Page navigation example">
               <ul class="pagination">
                 <li class="page-item"><a class="page-link" href="?pageno=1">Previous</a></li>
                 <li class="page-item <?php if($pageno <=1) echo 'disabled';?>">
@@ -98,9 +100,7 @@
                 <li class="page-item"><a class="page-link" href="?pageno=<?php echo $total_pages; ?>">Next</a></li>
               </ul>
             </nav>
-          </div>
-        </div>
-        <!-- /.row -->
+          </div> <br> <br>
     </section>
     <!-- /.content -->
 
