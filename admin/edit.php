@@ -20,19 +20,17 @@
             $image = $_FILES['image']['name'];
             $author_id = $_SESSION['user_id'];
             move_uploaded_file($_FILES['image']['tmp_name'],$file);
-            $sql = "UPDATE posts SET title = '$title', content = '$content', image = '$image' WHERE id = '$id'";
-            $stmt = $pdo->prepare($sql);
+            $stmt = $pdo->prepare("UPDATE posts SET title='$title',content='$content',image='$image' WHERE id='$id'");
             $result = $stmt->execute();
-            if($result){
-                echo "<script>alert('Successfully updated');window.location.href='index.php';</script>";
+            if ($result) {
+              echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
             }
         }
     }else{
-        $sql = "UPDATE posts SET title = '$title', content = '$content' WHERE id = '$id'";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $pdo->prepare("UPDATE posts SET title='$title',content='$content' WHERE id='$id'");
         $result = $stmt->execute();
-        if($result){
-            echo "<script>alert('Successfully updated');window.location.href='index.php';</script>";
+        if ($result) {
+          echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
         }
     }
   }

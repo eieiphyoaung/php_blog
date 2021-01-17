@@ -34,7 +34,7 @@
                 }else{
                   $pageno = 1;
                 }
-                $numOfrecs  = 1;
+                $numOfrecs  = 5;
                 $offset = ($pageno - 1) * $numOfrecs;
 
                 if(empty($_POST['search'])){
@@ -85,7 +85,7 @@
                         foreach($results as $result){
                     ?>
                     <tr>
-                      <td><?php echo $count; ?></td>
+                      <td><?php echo $count++; ?></td>
                       <td><?php echo $result['title']; ?></td>
                       <td><?php echo substr($result['content'],0,200); ?></td>
                       <td>
@@ -104,13 +104,12 @@
                     </tr>
                     <?php 
                           }
-                          $count++;
                         }
                     ?>
                   </tbody>
                 </table> <br>
 
-                <nav aria-label="Page navigation example" style="float:right;">
+                <nav aria-label="Page navigation example" style="float:right!important;">
                   <ul class="pagination">
                     <li class="page-item"><a class="page-link" href="?pageno=1">Previous</a></li>
                     <li class="page-item <?php if($pageno <=1) echo 'disabled';?>">

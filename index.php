@@ -1,3 +1,13 @@
+<?php
+  session_start();
+
+  require 'config/config.php';
+
+  if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
+    header('Location: login.php');
+  }
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,105 +38,67 @@
 
     <!-- Main content -->
     <section class="content">
+              <?php
+                  $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+                  $stmt->execute();
+                  $rawResults = $stmt->fetchAll();   
+
+                  if(!empty($_GET['pageno'])){
+                    $pageno = $_GET['pageno'];
+                  }else{
+                    $pageno = 1;
+                  }
+                  $numOfrecs = 6;
+                  $total_pages = ceil(count($rawResults) / $numOfrecs);
+                  $offset = ($pageno - 1) * $numOfrecs;
+
+                  $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numOfrecs");
+                  $stmt->execute();
+                  $results = $stmt->fetchAll();   
+              ?>
         <div class="row">
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                  <h4 class="text-center">Blog Title</h4>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+          <?php
+              if($results){
+                foreach($results as $result){
+          ?>
 
           <div class="col-md-4">
             <!-- Box Comment -->
             <div class="card card-widget">
               <div class="card-header">
-                  <h4 class="text-center">Blog Title</h4>
+                  <h4 class="text-center"><?php echo $result['title'];?></h4>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
+                <a href="blog_details.php?id=<?php echo $result['id'];?>"><img class="img-fluid pad"src="admin/images/<?php echo $result['image'];?>" alt="Blog Image" style="height:200px!important;"></a>
               </div>
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
           </div>
-          <!-- /.col -->
 
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                  <h4 class="text-center">Blog Title</h4>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
+          <?php 
+                }
+              }
+          ?>
+          <!-- /.col -->
+          <div>
+            <nav aria-label="Page navigation example" style="float:right;">
+              <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="?pageno=1">Previous</a></li>
+                <li class="page-item <?php if($pageno <=1) echo 'disabled';?>">
+                  <a class="page-link" href="<?php if($pageno <=1) {echo '#';} else { echo '?pageno='.($pageno-1);}?>">Previous</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?pageno=<?php echo $pageno; ?>"><?php echo $pageno;?></a>
+                </li>
+                <li class="page-item <?php if($pageno >= $total_pages) echo 'disabled';?>">
+                  <a class="page-link" href="<?php if($pageno >= $total_pages) {echo '#';} else { echo '?pageno='.($pageno+1);}?>">Next</a>
+                </li>
+                <li class="page-item"><a class="page-link" href="?pageno=<?php echo $total_pages; ?>">Next</a></li>
+              </ul>
+            </nav>
           </div>
-          <!-- /.col -->
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                  <h4 class="text-center">Blog Title</h4>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                  <h4 class="text-center">Blog Title</h4>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header">
-                  <h4 class="text-center">Blog Title</h4>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-
-
         </div>
         <!-- /.row -->
     </section>
@@ -139,11 +111,12 @@
   <!-- /.content-wrapper -->
 
   <footer class="main-footer" style="margin-left:0 !important;">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.0.5
+    <!-- To the right -->
+    <div class="float-right d-none d-sm-inline">
+      <a href="logout.php" type="button" class="btn btn-default">Logout</a>
     </div>
-    <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong> All rights
-    reserved.
+    <!-- Default to the left -->
+    <strong>Copyright &copy; 2020 <a href="#">A Programmer</a>.</strong> All rights reserved.
   </footer>
 
   <!-- Control Sidebar -->
