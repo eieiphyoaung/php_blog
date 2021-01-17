@@ -6,6 +6,10 @@
     header('Location: login.php');
   }
 
+  if($_SESSION['role'] != 1){
+      header('Location: login.php');
+  }
+
   if($_POST){
     $id = $_POST['id'];
     $title = $_POST['title'];

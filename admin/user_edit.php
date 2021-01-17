@@ -6,6 +6,10 @@
     header('Location: login.php');
   }
 
+  if($_SESSION['role'] != 1){
+      header('Location: login.php');
+  }
+
   if(!empty($_POST)){
     $id = $_POST['id'];
     $name = $_POST['name'];

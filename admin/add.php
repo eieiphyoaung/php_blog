@@ -6,6 +6,10 @@
     header('Location: login.php');
   }
 
+  if($_SESSION['role'] != 1){
+      header('Location: login.php');
+  }
+
   if($_POST){
       $file = 'images/'.($_FILES['image']['name']);
       $fileType = pathinfo($file,PATHINFO_EXTENSION);

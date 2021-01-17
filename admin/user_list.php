@@ -6,6 +6,19 @@
     header('Location: login.php');
   }
 
+  if($_SESSION['role'] != 1){
+      header('Location: login.php');
+  }
+
+  if (!empty($_POST['search'])) {
+    setcookie('search',$_POST['search'], time() + (86400 * 30), "/");
+  }else{
+    if (empty($_GET['pageno'])) {
+      unset($_COOKIE['search']); 
+      setcookie('search', null, -1, '/'); 
+    }
+  }
+
 ?>
 
   <?php
@@ -34,10 +47,10 @@
                 }else{
                   $pageno = 1;
                 }
-                $numOfrecs  = 5;
+                $numOfrecs  = 2;
                 $offset = ($pageno - 1) * $numOfrecs;
 
-                if(empty($_POST['search'])){
+                if (empty($_POST['search']) && empty($_COOKIE['search'])) {
                   $stmt = $pdo->prepare("SELECT * FROM users ORDER BY id DESC");
                   $stmt->execute();
                   $rawResults = $stmt->fetchAll();
@@ -48,7 +61,7 @@
                   $stmt->execute();
                   $results = $stmt->fetchAll();
                 }else{
-                  $search_key = $_POST['search'];
+                  $search_key = !empty($_POST['search']) ? $_POST['search'] : $_COOKIE['search'];
 
                   $stmt = $pdo->prepare("SELECT * FROM users WHERE name LIKE '%$search_key%' ORDER BY id DESC");
                   $stmt->execute();
