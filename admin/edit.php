@@ -31,11 +31,12 @@
             }
         }
     }else{
-        $stmt = $pdo->prepare("UPDATE posts SET title='$title',content='$content' WHERE id='$id'");
-        $result = $stmt->execute();
-        if ($result) {
-          echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
-        }
+
+      $statement = $pdo->prepare("UPDATE posts SET title='$title',content='$content' WHERE id='$id'");
+      $result = $statement->execute();
+      if ($result) {
+        echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
+      }
     }
   }
 
