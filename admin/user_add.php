@@ -11,32 +11,46 @@
   }
 
   if($_POST){
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    if(empty($_POST['role'])){
-        $role = 0;
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 4){
+      if(empty($_POST['name'])){
+        $nameError = 'Name cannot be null';
+      }
+      if(empty($_POST['email'])){
+        $emailError = 'Email cannot be null';
+      }
+      if(empty($_POST['password'])){
+        $passwordError = 'Password cannot be null';
+      }else if(strlen($_POST['password']) < 4){
+        $passwordError = 'Password should have at least 4 characters';
+      }
     }else{
-        $role = 1;
+      $name = $_POST['name'];
+      $email = $_POST['email'];
+      if(empty($_POST['role'])){
+          $role = 0;
+      }else{
+          $role = 1;
+      }
+      $password = $_POST['password'];
+  
+      $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+      $stmt->bindValue(':email',$email);
+      $stmt->execute();
+      $user = $stmt->fetch(PDO::FETCH_ASSOC);
+  
+      if($user){
+          echo "<script>alert('Email Duplicated');</script>";
+      }else{
+            $stmt = $pdo->prepare("INSERT INTO users(name,email,role,password) VALUES (:name,:email,:role,:password)");
+            $result = $stmt->execute(
+                array(':name' => $name, ':email' => $email,':role'=> $role,':password' => $password)
+            );
+            if($result){
+              echo "<script>alert('Successfully added');window.location.href='user_list.php';</script>";
+            }
+      }
+        
     }
-    $password = $_POST['password'];
-
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
-    $stmt->bindValue(':email',$email);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if($user){
-        echo "<script>alert('Email Duplicated');</script>";
-    }else{
-          $stmt = $pdo->prepare("INSERT INTO users(name,email,role,password) VALUES (:name,:email,:role,:password)");
-          $result = $stmt->execute(
-              array(':name' => $name, ':email' => $email,':role'=> $role,':password' => $password)
-          );
-          if($result){
-            echo "<script>alert('Successfully added');window.location.href='user_list.php';</script>";
-          }
-    }
-      
   }
 
 ?>
@@ -61,16 +75,16 @@
                 <div class="card-body">
                     <form action="user_add.php" method="post" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" class="form-control" name="name" placeholder="Name" required>
+                            <label for="name">Name</label><p style="color:red;"><?php echo empty($nameError) ? '' : '* '.$nameError; ?> </p>
+                            <input type="text" class="form-control" name="name">
                         </div>
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" name="email" placeholder="Email" required>
+                            <label for="email">Email</label><p style="color:red;"><?php echo empty($emailError) ? '' : '* '.$emailError; ?> </p>
+                            <input type="email" class="form-control" name="email">
                         </div>
                         <div class="form-group">
-                          <label for="email">Email</label>
-                          <input type="password" name="password" class="form-control" placeholder="Password" required>
+                          <label for="email">Password</label><p style="color:red;"><?php echo empty($passwordError) ? '' : '* '.$passwordError; ?> </p>
+                          <input type="password" name="password" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="admin">Role</label> <br>

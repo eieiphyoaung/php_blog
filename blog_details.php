@@ -12,17 +12,21 @@
   $result = $stmt->fetchAll();
 
   if($_POST){
-    $comment = $_POST['comment'];
-    $author_id = $_SESSION['user_id'];
-    $blog_id = $_GET['id'];
-
-    $stmt = $pdo->prepare("INSERT INTO comments(content,author_id,post_id) VALUES (:content,:author_id,:post_id)");
-    $result = $stmt->execute(
-        array(':content' => $comment, ':author_id' => $author_id,':post_id'=> $blog_id)
-    );
-    if($result){
-      header("Location: blog_details.php?id=".$blog_id);
-    }  
+    if(empty($_POST['comment'])){
+        $commentError = 'Comment cannot be null';
+    }else{
+      $comment = $_POST['comment'];
+      $author_id = $_SESSION['user_id'];
+      $blog_id = $_GET['id'];
+  
+      $stmt = $pdo->prepare("INSERT INTO comments(content,author_id,post_id) VALUES (:content,:author_id,:post_id)");
+      $result = $stmt->execute(
+          array(':content' => $comment, ':author_id' => $author_id,':post_id'=> $blog_id)
+      );
+      if($result){
+        header("Location: blog_details.php?id=".$blog_id);
+      }  
+    }
   }
 
   $cmtStmt = $pdo->prepare("SELECT * FROM comments WHERE post_id = ".$_GET['id']);
@@ -109,7 +113,7 @@
               <!-- /.card-footer -->
               <div class="card-footer">
                 <form action="" method="post">
-                  <div class="img-push">
+                  <div class="img-push"><p style="color:red;"><?php echo empty($commentError) ? '' : '* '.$commentError; ?> </p>
                     <input type="text" name="comment" class="form-control form-control-sm" placeholder="Press enter to post comment">
                   </div>
                 </form>

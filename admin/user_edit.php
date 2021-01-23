@@ -11,30 +11,53 @@
   }
 
   if(!empty($_POST)){
-    $id = $_POST['id'];
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    if (empty($_POST['role'])) {
-        $role = 0;
-      }else{
-        $role = 1;
+    if(empty($_POST['name']) || empty($_POST['email'])){
+      if(empty($_POST['name'])){
+        $nameError = 'Name cannot be null';
       }
-
-      $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email AND id!=:id");
-      $stmt->execute(array(':email'=>$email,':id'=>$id));
-      $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if($user){
-        echo "<script>alert('Email duplicated')</script>";
+      if(empty($_POST['email'])){
+        $emailError = 'Email cannot be null';
+      }
+    }elseif (!empty($_POST['password']) && strlen($_POST['password'] < 4)){
+      $passwordError = 'Password should have at least 4 characters';
     }else{
-        $stmt = $pdo->prepare("UPDATE users SET name='$name',email='$email',role='$role' WHERE id='$id'");
-        $result = $stmt->execute();
+      $id = $_POST['id'];
+      $name = $_POST['name'];
+      $email = $_POST['email'];
+      $password = $_POST['password'];
 
-          if($result){
-            echo "<script>alert('Successfully Updated');window.location.href='user_list.php';</script>";
-          }
+      if (empty($_POST['role'])) {
+          $role = 0;
+        }else{
+          $role = 1;
+        }
+  
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email AND id!=:id");
+        $stmt->execute(array(':email'=>$email,':id'=>$id));
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+  
+      if($user){
+          echo "<script>alert('Email duplicated')</script>";
+      }else{
+        if($password != null){
+          $stmt = $pdo->prepare("UPDATE users SET name='$name',email='$email',role='$role',password='$password' WHERE id='$id'");
+          $result = $stmt->execute();
+  
+            if($result){
+              echo "<script>alert('Successfully Updated');window.location.href='user_list.php';</script>";
+            }
+        }else{
+          $stmt = $pdo->prepare("UPDATE users SET name='$name',email='$email',role='$role' WHERE id='$id'");
+          $result = $stmt->execute();
+  
+            if($result){
+              echo "<script>alert('Successfully Updated');window.location.href='user_list.php';</script>";
+            }
+        }
+          
+      }
+        
     }
-      
   }
 
   $sql = "SELECT * FROM users WHERE id = ".$_GET['id'];
@@ -65,12 +88,17 @@
                     <form action="" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="id" value="<?php echo $_GET['id'];?>">
                         <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" class="form-control" name="name" value="<?php echo $result[0]['name']?>" required>
+                            <label for="name">Name</label><p style="color:red;"><?php echo empty($nameError) ? '' : '* '.$nameError; ?> </p>
+                            <input type="text" class="form-control" name="name" value="<?php echo $result[0]['name']?>">
                         </div>
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" name="email" value="<?php echo $result[0]['email']?>" required>
+                            <label for="email">Email</label><p style="color:red;"><?php echo empty($emailError) ? '' : '* '.$emailError; ?> </p>
+                            <input type="email" class="form-control" name="email" value="<?php echo $result[0]['email']?>">
+                        </div>
+                        <div class="form-group">
+                          <label for="email">Password</label><p style="color:red;"><?php echo empty($passwordError) ? '' : '* '.$passwordError; ?> </p>
+                          <span style="font-size:10px;">The user aleardy has a password</span>
+                          <input type="password" name="password" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="admin">Role</label> <br>

@@ -11,31 +11,40 @@
   }
 
   if($_POST){
-    $id = $_POST['id'];
-    $title = $_POST['title'];
-    $content = $_POST['content'];
-    
-    if($_FILES['image']['name'] != null){
-        $file = 'images/'.($_FILES['image']['name']);
-        $fileType = pathinfo($file,PATHINFO_EXTENSION);
-        if($fileType != 'png' && $fileType != 'jpg' && $fileType != 'jpeg'){
-            echo "<script>alert('Image must be PNG,JPG or JPEG');</script>";
-        }else{
-            $image = $_FILES['image']['name'];
-            $author_id = $_SESSION['user_id'];
-            move_uploaded_file($_FILES['image']['tmp_name'],$file);
-            $stmt = $pdo->prepare("UPDATE posts SET title='$title',content='$content',image='$image' WHERE id='$id'");
-            $result = $stmt->execute();
-            if ($result) {
-              echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
-            }
-        }
+    if(empty($_POST['title']) || empty($_POST['content'])){
+      if(empty($_POST['title'])){
+        $titleError = 'Title cannot be null';
+      }
+      if(empty($_POST['content'])){
+        $contentError = 'Content cannot be null';
+      }
     }else{
-
-      $statement = $pdo->prepare("UPDATE posts SET title='$title',content='$content' WHERE id='$id'");
-      $result = $statement->execute();
-      if ($result) {
-        echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
+      $id = $_POST['id'];
+      $title = $_POST['title'];
+      $content = $_POST['content'];
+      
+      if($_FILES['image']['name'] != null){
+          $file = 'images/'.($_FILES['image']['name']);
+          $fileType = pathinfo($file,PATHINFO_EXTENSION);
+          if($fileType != 'png' && $fileType != 'jpg' && $fileType != 'jpeg'){
+              echo "<script>alert('Image must be PNG,JPG or JPEG');</script>";
+          }else{
+              $image = $_FILES['image']['name'];
+              $author_id = $_SESSION['user_id'];
+              move_uploaded_file($_FILES['image']['tmp_name'],$file);
+              $stmt = $pdo->prepare("UPDATE posts SET title='$title',content='$content',image='$image' WHERE id='$id'");
+              $result = $stmt->execute();
+              if ($result) {
+                echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
+              }
+          }
+      }else{
+  
+        $statement = $pdo->prepare("UPDATE posts SET title='$title',content='$content' WHERE id='$id'");
+        $result = $statement->execute();
+        if ($result) {
+          echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
+        }
       }
     }
   }
@@ -69,11 +78,11 @@
                     <form action="" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="id" value="<?php echo $result[0]['id'];?>">
                         <div class="form-group">
-                            <label for="title">Title</label>
-                            <input type="text" class="form-control" name="title" value="<?php echo $result[0]['title'];?>"required>
+                            <label for="title">Title</label> <p style="color:red;"><?php echo empty($titleError) ? '' : '* '.$titleError; ?> </p>
+                            <input type="text" class="form-control" name="title" value="<?php echo $result[0]['title'];?>">
                         </div>
                         <div class="form-group">
-                            <label for="content">Content</label>
+                            <label for="content">Content</label><p style="color:red;"><?php echo empty($contentError) ? '' : '* '.$contentError; ?> </p>
                             <textarea name="content" class="form-control" cols="30" rows="10"><?php echo $result[0]['content'];?></textarea>
                         </div>
                         <div class="form-group">

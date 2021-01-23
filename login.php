@@ -2,6 +2,14 @@
 session_start();
 require 'config/config.php';
 if($_POST){
+  if(empty($_POST['email']) || empty($_POST['password'])){
+    if(empty($_POST['email'])){
+      $emailError = 'Email cannot be null';
+    }
+    if(empty($_POST['password'])){
+      $passwordError = 'Password cannot be null';
+    }
+  }else{
     $email = $_POST['email'];
     $password = $_POST['password'];
 
@@ -21,7 +29,7 @@ if($_POST){
        }
     }
     echo "<script>alert('Incorrect credentials');</script>";
-    
+  } 
 }
 ?>
 
@@ -56,16 +64,19 @@ if($_POST){
       <p class="login-box-msg">Sign in to start your session</p>
 
       <form action="login.php" method="post">
+        <p style="color:red;"><?php echo empty($emailError) ? '' : '* '.$emailError; ?> </p>
         <div class="input-group mb-3">
-          <input type="email" name="email" class="form-control" placeholder="Email" required>
+          <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
             </div>
           </div>
         </div>
+
+        <p style="color:red;"><?php echo empty($passwordError) ? '' : '* '.$passwordError; ?> </p>
         <div class="input-group mb-3">
-          <input type="password" name="password" class="form-control" placeholder="Password" required>
+          <input type="password" name="password" class="form-control" placeholder="Password">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
