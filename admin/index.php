@@ -1,6 +1,7 @@
 <?php
   session_start();
   require '../config/config.php';
+  require '../config/common.php';
 
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location: login.php');
@@ -99,8 +100,8 @@
                     ?>
                     <tr>
                       <td><?php echo $count++; ?></td>
-                      <td><?php echo $result['title']; ?></td>
-                      <td><?php echo substr($result['content'],0,200); ?></td>
+                      <td><?php echo escape($result['title']); ?></td>
+                      <td><?php echo escape(substr($result['content'],0,200)); ?></td>
                       <td>
                           <div class="btn-group">
                               <div class="container">

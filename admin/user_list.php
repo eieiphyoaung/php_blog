@@ -1,6 +1,7 @@
 <?php
   session_start();
   require '../config/config.php';
+  require '../config/common.php';
 
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location: login.php');
@@ -100,8 +101,8 @@
                     ?>
                     <tr>
                       <td><?php echo $count++; ?></td>
-                      <td><?php echo $result['name']; ?></td>
-                      <td><?php echo $result['email']; ?></td>
+                      <td><?php echo escape($result['name']); ?></td>
+                      <td><?php echo escape($result['email']); ?></td>
                       <td><?php if($result['role'] ==1) {echo 'admin';} else { echo 'user';}?></td>
                       <td>
                           <div class="btn-group">

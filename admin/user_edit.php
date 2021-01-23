@@ -91,11 +91,11 @@
                         <input type="hidden" name="id" value="<?php echo $_GET['id'];?>">
                         <div class="form-group">
                             <label for="name">Name</label><p style="color:red;"><?php echo empty($nameError) ? '' : '* '.$nameError; ?> </p>
-                            <input type="text" class="form-control" name="name" value="<?php echo $result[0]['name']?>">
+                            <input type="text" class="form-control" name="name" value="<?php echo escape($result[0]['name'])?>">
                         </div>
                         <div class="form-group">
                             <label for="email">Email</label><p style="color:red;"><?php echo empty($emailError) ? '' : '* '.$emailError; ?> </p>
-                            <input type="email" class="form-control" name="email" value="<?php echo $result[0]['email']?>">
+                            <input type="email" class="form-control" name="email" value="<?php echo escape($result[0]['email'])?>">
                         </div>
                         <div class="form-group">
                           <label for="email">Password</label><p style="color:red;"><?php echo empty($passwordError) ? '' : '* '.$passwordError; ?> </p>

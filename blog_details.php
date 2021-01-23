@@ -74,13 +74,13 @@
             <!-- Box Comment -->
             <div class="card card-widget">
               <div class="card-header">
-                  <h4 class="text-center"><?php echo $result[0]['title'];?></h4>
+                  <h4 class="text-center"><?php echo escape($result[0]['title']);?></h4>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <img class="img-fluid pad" src="admin/images/<?php echo $result[0]['image'];?>" alt="Photo">
 
-                <p><?php echo $result[0]['content'];?></p>
+                <p><?php echo escape($result[0]['content']);?></p>
                 <h4>Comments</h4> <hr>
                 <a href="/php-blog" type="button" class="btn btn-default">Go Back</a>
               </div>
@@ -98,8 +98,8 @@
                 <div class="card-comment">
                   <div class="comment-text" style="margin-left:0px !important;">
                     <span class="username">
-                      <?php echo $auResult[0]['name'];?>
-                      <span class="text-muted float-right"><?php echo $cmRes['created_at'];?></span>
+                      <?php echo escape($auResult[0]['name']);?>
+                      <span class="text-muted float-right"><?php echo escape($cmRes['created_at']);?></span>
                     </span><!-- /.username -->
                     <?php echo $cmRes['content'];?>
                   </div>
