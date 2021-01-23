@@ -1,6 +1,8 @@
 <?php
 session_start();
 require 'config/config.php';
+require 'config/common.php';
+
 if($_POST){
   if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 4){
     if(empty($_POST['name'])){
@@ -62,7 +64,7 @@ if($_POST){
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="../../index2.html"><b>Blog</b></a>
+    <a href="#"><b>Blog</b></a>
   </div>
   <!-- /.login-logo -->
   <div class="card">
@@ -70,6 +72,7 @@ if($_POST){
       <p class="login-box-msg">Register New Account</p>
 
       <form action="register.php" method="post">
+        <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
         <p style="color:red;"><?php echo empty($nameError) ? '' : '* '.$nameError; ?> </p>
         <div class="input-group mb-3">
           <input type="text" name="name" class="form-control" placeholder="Name">

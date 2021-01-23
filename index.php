@@ -38,24 +38,24 @@
 
     <!-- Main content -->
     <section class="content">
-              <?php
-                  $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
-                  $stmt->execute();
-                  $rawResults = $stmt->fetchAll();   
+        <?php
+            $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+            $stmt->execute();
+            $rawResults = $stmt->fetchAll();   
 
-                  if(!empty($_GET['pageno'])){
-                    $pageno = $_GET['pageno'];
-                  }else{
-                    $pageno = 1;
-                  }
-                  $numOfrecs = 6;
-                  $total_pages = ceil(count($rawResults) / $numOfrecs);
-                  $offset = ($pageno - 1) * $numOfrecs;
+            if(!empty($_GET['pageno'])){
+              $pageno = $_GET['pageno'];
+            }else{
+              $pageno = 1;
+            }
+            $numOfrecs = 6;
+            $total_pages = ceil(count($rawResults) / $numOfrecs);
+            $offset = ($pageno - 1) * $numOfrecs;
 
-                  $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numOfrecs");
-                  $stmt->execute();
-                  $results = $stmt->fetchAll();   
-              ?>
+            $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numOfrecs");
+            $stmt->execute();
+            $results = $stmt->fetchAll();   
+        ?>
         <div class="row">
           <?php
               if($results){
